@@ -16,3 +16,30 @@ For more details please refer:
 https://www.techwalla.com/articles/how-to-set-java-home-on-centos
 https://help.sonatype.com/learning/repository-manager-3/proxying-maven-and-npm-quick-start-guide
 https://tecadmin.net/install-apache-maven-on-centos/
+
+How to configure Nexus:
+sudo useradd nexus
+sudo usermod -d /opt/nexus nexus
+sudo chown nexus:nexus /opt/nexus -R
+
+run_as_user="nexus"
+/etc/systemd/system/nexus.service
+[Unit]
+Description=nexus service
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/opt/nexus/bin/nexus start
+ExecStop=/opt/nexus/bin/nexus stop
+User=nexus
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
+
+sudo systemctl daemon-reload
+sudo systemctl enable nexus.service
+sudo systemctl start nexus.service
+
+tail -f /opt/sonatype-work/nexus3/log/nexus.log
